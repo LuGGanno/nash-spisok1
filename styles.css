@@ -22,6 +22,12 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 
+/* Атрибут hidden обязан побеждать любой display ниже по файлу.
+   Без этого элемент с hidden, которому задан display: flex/block,
+   остаётся в потоке: прозрачная шторка на весь экран продолжает
+   ловить все клики, и интерфейс выглядит «мёртвым». */
+[hidden] { display: none !important; }
+
 body {
   font-family: "Comfortaa", system-ui, sans-serif;
   color: var(--ink);

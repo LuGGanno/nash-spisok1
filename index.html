@@ -7,7 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&family=Marck+Script&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <!-- ?v=N в конце адресов — версия сборки. Браузер кэширует файлы, и без
+       этого после обновления сайта он ещё какое-то время отдаёт старую
+       версию. Меняешь код — увеличь число здесь и в импортах внутри app.js. -->
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
   <!-- Плавающие сердечки на фоне -->
@@ -85,6 +88,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>

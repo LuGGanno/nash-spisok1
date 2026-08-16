@@ -4,10 +4,13 @@
    в календарь (это скрыто внутри calendar.js).
    ========================================================================= */
 
-import { IDEAS, CATEGORIES, DURATIONS } from './data/ideas.js';
-import { CONFIG } from './config.js';
-import { store } from './store.js';
-import { googleCalendarUrl, downloadIcs } from './calendar.js';
+// ?v=N — версия сборки, см. комментарий в index.html.
+// При любом изменении кода увеличь число здесь и в index.html,
+// иначе браузер может продолжить исполнять старую закэшированную версию.
+import { IDEAS, CATEGORIES, DURATIONS } from './data/ideas.js?v=2';
+import { CONFIG } from './config.js?v=2';
+import { store } from './store.js?v=2';
+import { googleCalendarUrl, downloadIcs } from './calendar.js?v=2';
 
 const UNLOCK_KEY = 'date-ideas:unlocked';
 const VOTE_ORDER = { null: 0, later: 1, yes: 2, no: 3 };
@@ -230,7 +233,13 @@ function openSheet(id) {
   refreshSheetState();
 
   els.sheetOverlay.hidden = false;
-  requestAnimationFrame(() => els.sheetOverlay.classList.add('is-open'));
+  // Форсируем пересчёт стилей, чтобы браузер зафиксировал закрытое состояние
+  // до добавления класса — тогда анимация стартует гарантированно.
+  // Через requestAnimationFrame это ненадёжно: он не срабатывает, когда
+  // страница не отрисовывает кадры (фоновая вкладка, экономия энергии),
+  // и шторка молча остаётся уехавшей за экран.
+  void els.sheetOverlay.offsetWidth;
+  els.sheetOverlay.classList.add('is-open');
 }
 
 function closeSheet() {
