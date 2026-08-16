@@ -1,0 +1,7 @@
+# локальный сервер для проверки
+server.log
+
+# системный мусор
+.DS_Store
+Thumbs.db
+desktop.ini

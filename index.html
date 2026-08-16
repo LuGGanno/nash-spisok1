@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Наш список ♥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&family=Marck+Script&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Плавающие сердечки на фоне -->
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <!-- ЭКРАН: ВХОД -->
+  <section class="screen is-active" id="screen-gate">
+    <div class="stage">
+      <div class="card">
+        <div class="emoji-big">💌</div>
+        <h1 class="title">Наш список свиданий</h1>
+        <p class="subtitle">Введи код, чтобы войти</p>
+        <input class="gate-input" id="gateInput" type="text" inputmode="numeric" placeholder="••••" autocomplete="off" />
+        <button class="btn btn-yes" id="gateBtn" type="button">Войти 💕</button>
+        <p class="gate-error" id="gateError" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+  <div class="app" id="app" hidden>
+    <header class="app-header">
+      <h1 class="app-title">Наш список <span class="heart">♥</span></h1>
+      <nav class="tabs" id="tabs">
+        <button class="tab is-active" data-tab="ideas" type="button">Идеи</button>
+        <button class="tab" data-tab="plans" type="button">Наши планы</button>
+      </nav>
+    </header>
+
+    <!-- ВКЛАДКА: ИДЕИ -->
+    <section class="tab-panel is-active" data-panel="ideas">
+      <div class="filters">
+        <div class="filter-row" id="filterCategory"></div>
+        <div class="filter-row" id="filterDuration"></div>
+      </div>
+      <div class="grid" id="ideasGrid"></div>
+    </section>
+
+    <!-- ВКЛАДКА: НАШИ ПЛАНЫ -->
+    <section class="tab-panel" data-panel="plans">
+      <div class="plans" id="plansContent"></div>
+    </section>
+  </div>
+
+  <!-- ШТОРКА С ДЕТАЛЯМИ ИДЕИ -->
+  <div class="sheet-overlay" id="sheetOverlay" hidden>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <button class="sheet-close" id="sheetClose" type="button" aria-label="Закрыть">✕</button>
+      <div class="sheet-hero" id="sheetHero"></div>
+      <div class="sheet-body">
+        <div class="sheet-badges" id="sheetBadges"></div>
+        <h2 class="sheet-title" id="sheetTitle"></h2>
+        <p class="sheet-desc" id="sheetDesc"></p>
+        <p class="sheet-place" id="sheetPlace"></p>
+
+        <div class="vote-row" id="voteRow">
+          <button class="vote-btn vote-btn--yes" data-vote="yes" type="button">Да 💕</button>
+          <button class="vote-btn vote-btn--later" data-vote="later" type="button">Потом 🕒</button>
+          <button class="vote-btn vote-btn--no" data-vote="no" type="button">Нет</button>
+        </div>
+        <button class="star-btn" id="starBtn" type="button">⭐ Очень хочу</button>
+
+        <div class="date-block">
+          <label class="date-label" for="dateInput">Когда свободна?</label>
+          <input class="date-input" id="dateInput" type="date" />
+        </div>
+
+        <div class="cal-row">
+          <button class="btn btn-ghost" id="gcalBtn" type="button" disabled>📅 В Google Календарь</button>
+          <button class="btn btn-ghost" id="icsBtn" type="button" disabled>⬇️ Скачать .ics</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
