@@ -3,6 +3,58 @@
 Один раз пройти шаги 1–3 — дальше приложение живёт само, добавление новых
 идей это просто правка `data/ideas.js`.
 
+## 0. ⚠️ Нужно выполнить один раз: таблицы для оценок и своих идей
+
+Без этого приложение работает, но базовым списком из файла: добавленные
+идеи, архив и оценки не будут сохраняться между устройствами.
+
+Supabase → **SQL Editor** → **New query** → вставить целиком → **Run**:
+
+```sql
+create table ideas (
+  id            text primary key,
+  title         text not null,
+  category      text not null,
+  duration      text not null,
+  description   text,
+  place         text,
+  map_query     text,
+  emoji         text,
+  gradient_from text,
+  gradient_to   text,
+  image         text,
+  archived      boolean default false,
+  created_at    timestamptz default now()
+);
+
+alter table ideas enable row level security;
+create policy "anon can read ideas"   on ideas for select using (true);
+create policy "anon can insert ideas" on ideas for insert with check (true);
+create policy "anon can update ideas" on ideas for update using (true);
+
+create table ratings (
+  id         text primary key,
+  idea_id    text not null,
+  person     text not null,
+  hearts     int,
+  note       text,
+  updated_at timestamptz default now()
+);
+
+alter table ratings enable row level security;
+create policy "anon can read ratings"   on ratings for select using (true);
+create policy "anon can insert ratings" on ratings for insert with check (true);
+create policy "anon can update ratings" on ratings for update using (true);
+```
+
+Ответ «Success. No rows returned» — это правильно: создание таблиц ничего не возвращает.
+
+После этого открой сайт: приложение увидит пустую таблицу `ideas` и само засеет
+её 25 идеями из `data/ideas.js`. Делать для этого ничего не надо.
+
+> `data/ideas.js` остаётся в репозитории как первоисточник. Если таблицу когда-нибудь
+> опустошат, приложение восстановит базовый список из него автоматически.
+
 ## 1. Supabase (хранилище) — ✅ уже сделано
 
 Проект создан, таблица создана, ключи прописаны в [`config.js`](config.js),
@@ -113,12 +165,27 @@ Supabase присылает объект вида `{type, table, record, old_rec
 `record` и `old_record` в выражениях выше. Сделай тестовое изменение
 в приложении и проверь, что сообщение пришло.
 
-## 4. Как добавлять новые идеи
+## 4. Как добавлять и убирать идеи
 
-Не трогай Supabase и не трогай остальные файлы — просто вернись в чат, где
-собиралось это приложение, и попроси добавить идею. Новая запись появится
-в [`data/ideas.js`](data/ideas.js), а строка в базе создастся сама при первом
-её голосе.
+Прямо в приложении: кнопка **«+ Добавить идею»** над списком. Название
+обязательно, остальное можно пропустить. Идея сразу видна обоим.
+
+Убрать идею — открыть её и нажать **«Убрать в архив»**. Насовсем ничего
+не удаляется: архив со счётчиком лежит внизу списка идей, оттуда
+любая идея возвращается одним нажатием вместе с оценками и историей.
+
+Файл [`data/ideas.js`](data/ideas.js) трогать больше не нужно — он остался
+первоисточником на случай восстановления базового списка.
+
+## 4б. Оценки свиданий
+
+Когда выбранный день прошёл, в карточке появляется блок «Как прошло?»:
+пять сердечек и заметка. Оценки раздельные — каждый ставит свою и видит
+чужую рядом.
+
+Кто именно смотрит, задаётся один раз при первом входе и показан
+в шапке — нажатие по нему переключает. Это подпись под оценкой,
+а не авторизация: ничего не закрывает и ничего не защищает.
 
 ## 5. Локальная проверка перед публикацией
 

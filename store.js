@@ -1,9 +1,9 @@
 /* =========================================================================
-   STORE — единственное место, где приложение знает про хранение данных.
+   STORE — ответы на идеи: голос, звезда, выбранный день.
    Снаружи виден только этот интерфейс:
 
      store.init(config)
-     store.registerIdeas(ideas)     // однократно, чтобы знать title для БД
+     store.registerIdeas(ideas)     // чтобы знать title для денормализации
      await store.load()
      store.get(id)                  -> {vote, starred, plannedDate}
      await store.setVote(id, vote)  // 'yes' | 'later' | 'no' | null
@@ -12,41 +12,25 @@
      store.onChange(cb)
 
    Запись оптимистичная: состояние в памяти обновляется мгновенно,
-   запрос к Supabase летит в фоне. При сбое сети — тихий повтор с расту-
-   щей паузой, и наружу летит событие 'store:save-failed', чтобы
-   интерфейс мог показать тост «не сохранилось, пробую ещё раз».
+   запрос летит в фоне. При сбое сети — тихий повтор с растущей паузой,
+   и наружу летит событие 'store:save-failed', чтобы интерфейс показал
+   тост «не сохранилось, пробую ещё раз».
 
    Локальный кэш в localStorage — чтобы при обновлении страницы (или без
-   интернета) она сразу увидела последнее известное состояние, не дожи-
-   даясь ответа сервера.
+   интернета) состояние было видно сразу, не дожидаясь ответа сервера.
    ========================================================================= */
 
+import { isConfigured, sbSelect, sbUpsert } from './supabase.js?v=3';
+
 const CACHE_KEY = 'date-ideas:cache:v1';
-const DEMO_PLACEHOLDER = 'YOUR-PROJECT';
 
 const state = new Map();      // id -> {vote, starred, plannedDate}
 const titles = new Map();     // id -> title (для денормализованной колонки)
 const listeners = new Set();
 const retryTimers = new Map();
-const saveChains = new Map();  // id -> Promise: очередь записи, по одной на идею
+const saveChains = new Map(); // id -> Promise: очередь записи, по одной на идею
 
 let CFG = null;
-
-function isConfigured() {
-  return Boolean(CFG?.supabaseUrl) && !CFG.supabaseUrl.includes(DEMO_PLACEHOLDER);
-}
-
-function headers() {
-  return {
-    apikey: CFG.supabaseAnonKey,
-    Authorization: `Bearer ${CFG.supabaseAnonKey}`,
-    'Content-Type': 'application/json',
-  };
-}
-
-function restUrl(path) {
-  return `${CFG.supabaseUrl}/rest/v1/${path}`;
-}
 
 function notify() {
   saveCache();
@@ -57,10 +41,9 @@ function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return;
-    const obj = JSON.parse(raw);
-    Object.entries(obj).forEach(([id, entry]) => state.set(id, entry));
+    Object.entries(JSON.parse(raw)).forEach(([id, entry]) => state.set(id, entry));
   } catch {
-    // повреждённый кэш — просто игнорируем, дальше данные придут с сервера
+    // повреждённый кэш — игнорируем, дальше данные придут с сервера
   }
 }
 
@@ -101,22 +84,15 @@ async function sendSave(id, attempt = 0) {
   // Берём АКТУАЛЬНОЕ состояние в момент отправки, а не снимок на момент клика:
   // если пока запрос стоял в очереди что-то поменялось, уедет свежая версия.
   const entry = store.get(id);
-  const body = {
-    id,
-    title: titles.get(id) || id,
-    vote: entry.vote,
-    starred: entry.starred,
-    planned_date: entry.plannedDate,
-    updated_at: new Date().toISOString(),
-  };
-
   try {
-    const res = await fetch(restUrl(`${CFG.supabaseTable}?on_conflict=id`), {
-      method: 'POST',
-      headers: { ...headers(), Prefer: 'resolution=merge-duplicates' },
-      body: JSON.stringify(body),
+    await sbUpsert(CFG.supabaseTable, {
+      id,
+      title: titles.get(id) || id,
+      vote: entry.vote,
+      starred: entry.starred,
+      planned_date: entry.plannedDate,
+      updated_at: new Date().toISOString(),
     });
-    if (!res.ok) throw new Error(`Supabase save failed: ${res.status} ${await res.text()}`);
     clearRetry(id);
   } catch (err) {
     console.error('[store] не удалось сохранить', id, err);
@@ -163,9 +139,7 @@ export const store = {
       return;
     }
     try {
-      const res = await fetch(restUrl(`${CFG.supabaseTable}?select=*`), { headers: headers() });
-      if (!res.ok) throw new Error(`Supabase load failed: ${res.status}`);
-      const rows = await res.json();
+      const rows = await sbSelect(CFG.supabaseTable, 'select=*');
       rows.forEach((row) => {
         state.set(row.id, {
           vote: row.vote,

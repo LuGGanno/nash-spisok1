@@ -10,7 +10,7 @@
   <!-- ?v=N в конце адресов — версия сборки. Браузер кэширует файлы, и без
        этого после обновления сайта он ещё какое-то время отдаёт старую
        версию. Меняешь код — увеличь число здесь и в импортах внутри app.js. -->
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <!-- Плавающие сердечки на фоне -->
@@ -30,10 +30,26 @@
     </div>
   </section>
 
+
+  <!-- ЭКРАН: КТО ТЫ (нужен, чтобы оценки свиданий были раздельными) -->
+  <section class="screen" id="screen-person" hidden>
+    <div class="stage">
+      <div class="card">
+        <div class="emoji-big">👋</div>
+        <h1 class="title">Кто это открыл?</h1>
+        <p class="subtitle">Чтобы оценки свиданий не перемешались</p>
+        <div class="person-choice" id="personChoice"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
   <div class="app" id="app" hidden>
     <header class="app-header">
-      <h1 class="app-title">Наш список <span class="heart">♥</span></h1>
+      <div class="app-header-top">
+        <h1 class="app-title">Наш список <span class="heart">♥</span></h1>
+        <button class="person-chip" id="personChip" type="button" title="Переключить, кто смотрит"></button>
+      </div>
       <nav class="tabs" id="tabs">
         <button class="tab is-active" data-tab="ideas" type="button">Идеи</button>
         <button class="tab" data-tab="plans" type="button">Наши планы</button>
@@ -46,7 +62,12 @@
         <div class="filter-row" id="filterCategory"></div>
         <div class="filter-row" id="filterDuration"></div>
       </div>
+      <button class="add-idea-btn" id="addIdeaBtn" type="button">+ Добавить идею</button>
       <div class="grid" id="ideasGrid"></div>
+      <div class="archive-block" id="archiveBlock" hidden>
+        <button class="archive-toggle" id="archiveToggle" type="button"></button>
+        <div class="archive-list" id="archiveList" hidden></div>
+      </div>
     </section>
 
     <!-- ВКЛАДКА: НАШИ ПЛАНЫ -->
@@ -82,12 +103,55 @@
           <button class="btn btn-ghost" id="gcalBtn" type="button" disabled>📅 В Google Календарь</button>
           <button class="btn btn-ghost" id="icsBtn" type="button" disabled>⬇️ Скачать .ics</button>
         </div>
+
+        <!-- ОЦЕНКА: появляется только у свиданий, которые уже прошли -->
+        <div class="rating-block" id="ratingBlock" hidden>
+          <h3 class="rating-heading">Как прошло?</h3>
+          <div class="rating-mine">
+            <span class="rating-who" id="ratingWho"></span>
+            <div class="hearts-row" id="heartsRow"></div>
+          </div>
+          <textarea class="rating-note" id="ratingNote" rows="2" placeholder="Что запомнилось?"></textarea>
+          <div class="rating-theirs" id="ratingTheirs"></div>
+        </div>
+
+        <button class="archive-btn" id="archiveBtn" type="button">🗃️ Убрать в архив</button>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ШТОРКА: ДОБАВИТЬ ИДЕЮ -->
+  <div class="sheet-overlay" id="addOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+      <button class="sheet-close" id="addClose" type="button" aria-label="Закрыть">✕</button>
+      <div class="sheet-body">
+        <h2 class="sheet-title" id="addTitle">Новая идея</h2>
+
+        <label class="field-label" for="addName">Название</label>
+        <input class="field-input" id="addName" type="text" placeholder="Например, Пикник на закате" />
+
+        <label class="field-label" for="addCategory">Категория</label>
+        <select class="field-input" id="addCategory"></select>
+
+        <label class="field-label" for="addDuration">Сколько займёт</label>
+        <select class="field-input" id="addDuration"></select>
+
+        <label class="field-label" for="addDesc">Описание <span class="field-hint">необязательно</span></label>
+        <textarea class="field-input" id="addDesc" rows="3" placeholder="Пара тёплых строк о том, почему это будет хорошо"></textarea>
+
+        <label class="field-label" for="addPlace">Место <span class="field-hint">необязательно</span></label>
+        <input class="field-input" id="addPlace" type="text" placeholder="Например, Коста-Брава" />
+
+        <p class="field-error" id="addError" aria-live="polite"></p>
+        <button class="btn btn-yes add-submit" id="addSubmit" type="button">Добавить в список 💕</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" hidden></div>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

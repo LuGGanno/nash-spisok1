@@ -10,6 +10,7 @@
   --ink:     #5b3a4a;
   --ink-soft:#9a7686;
   --white:   #ffffff;
+  --line:    #efdfe8;   /* цвет границ полей и карточек */
   --green:   #3fae72;
   --amber:   #d99a3d;
   --shadow:  0 18px 45px rgba(255, 111, 156, 0.22);
@@ -473,3 +474,118 @@ body {
 @media (max-width: 380px) {
   .card { padding: 28px 18px 24px; }
 }
+
+/* ===================== КТО СМОТРИТ ===================== */
+
+.person-choice { display: flex; gap: 12px; margin-top: 18px; }
+
+.person-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 18px 10px; border: 2px solid var(--line); border-radius: 18px;
+  background: #fff; font: inherit; font-weight: 600; color: var(--ink);
+  cursor: pointer; transition: transform .15s, border-color .15s;
+}
+.person-btn:hover { transform: translateY(-2px); border-color: var(--pink); }
+.person-btn-emoji { font-size: 34px; }
+
+.app-header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.person-chip {
+  flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  cursor: pointer; white-space: nowrap;
+}
+.person-chip:hover { border-color: var(--pink); color: var(--ink); }
+
+/* ===================== ДОБАВИТЬ ИДЕЮ ===================== */
+
+.add-idea-btn {
+  display: block; width: 100%; margin: 0 0 14px; padding: 13px;
+  border: 2px dashed var(--line); border-radius: 16px; background: #fff;
+  font: inherit; font-weight: 600; color: var(--ink-soft); cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.add-idea-btn:hover { border-color: var(--pink); color: var(--pink-deep); }
+
+.field-label {
+  display: block; margin: 14px 0 6px; font-size: 13px; font-weight: 600; color: var(--ink-soft);
+}
+.field-hint { font-weight: 400; opacity: .7; }
+
+.field-input {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+  font: inherit; font-size: 15px; color: var(--ink); background: #fff; resize: vertical;
+}
+.field-input:focus { outline: none; border-color: var(--pink); }
+
+.field-error { min-height: 18px; margin-top: 10px; font-size: 13px; color: #c0392b; }
+.add-submit { width: 100%; margin-top: 4px; }
+
+/* ===================== ОЦЕНКА СВИДАНИЯ ===================== */
+
+.rating-block {
+  margin-top: 18px; padding: 16px; border-radius: 18px;
+  background: linear-gradient(135deg, #fff4f8, #f6f0ff);
+}
+.rating-heading { margin: 0 0 12px; font-size: 16px; font-weight: 700; color: var(--ink); }
+.rating-mine { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rating-who { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+
+.hearts-row { display: flex; gap: 2px; }
+.heart-btn {
+  border: none; background: none; padding: 2px; font-size: 24px; line-height: 1;
+  cursor: pointer; transition: transform .12s;
+}
+.heart-btn:hover { transform: scale(1.18); }
+
+.rating-note {
+  width: 100%; margin-top: 10px; padding: 10px 12px;
+  border: 1px solid var(--line); border-radius: 12px;
+  font: inherit; font-size: 14px; color: var(--ink); background: #fff; resize: vertical;
+}
+.rating-note:focus { outline: none; border-color: var(--pink); }
+
+.rating-theirs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);
+  font-size: 13px;
+}
+.rating-theirs-hearts { font-size: 14px; }
+.rating-theirs-note { flex-basis: 100%; color: var(--ink-soft); font-style: italic; }
+.rating-theirs-empty { color: var(--ink-soft); opacity: .75; }
+
+.plans-rating { display: block; margin-top: 3px; font-size: 12px; }
+
+/* ===================== АРХИВ ===================== */
+
+.archive-btn {
+  display: block; width: 100%; margin-top: 14px; padding: 11px;
+  border: 1px solid var(--line); border-radius: 14px; background: #fff;
+  font: inherit; font-size: 14px; color: var(--ink-soft); cursor: pointer;
+}
+.archive-btn:hover { border-color: #c0392b; color: #c0392b; }
+
+.archive-block { margin-top: 20px; }
+
+.archive-toggle {
+  border: none; background: none; padding: 6px 0; font: inherit; font-size: 14px;
+  font-weight: 600; color: var(--ink-soft); cursor: pointer;
+}
+.archive-toggle:hover { color: var(--ink); }
+
+.archive-list { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+
+.archive-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px;
+  background: #fff; opacity: .75;
+}
+.archive-emoji { font-size: 20px; }
+.archive-title { flex: 1; font-size: 14px; color: var(--ink); }
+
+.archive-restore {
+  flex-shrink: 0; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; font: inherit; font-size: 13px; font-weight: 600;
+  color: var(--pink-deep); cursor: pointer;
+}
+.archive-restore:hover { border-color: var(--pink); }
